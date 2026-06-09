@@ -42,50 +42,6 @@ app.get('/', (req, res) => {
 });
 const Message = require('./models/Message');
 
-app.post('/messages', async (req, res) => {
-  const newMsg = new Message(req.body);
-  await newMsg.save();
-  res.status(201).json(newMsg);
-});
-
-app.get('/messages/:roomId', async (req, res) => {
-  const messages = await Message.find({ roomId: req.params.roomId });
-  res.json(messages);
-});
-
-
-
-// Message Routes
-app.post('/send', verifyToken, async (req, res) => {
-  const { receiver, message, postId } = req.body;
-  const sender = req.username.username;
-
-  try {
-    const newMsg = new Chat({ sender, receiver, message, postId });
-    await newMsg.save();
-    res.status(200).json({ message: 'Message sent' });
-  } catch (err) {
-    res.status(500).json({ error: 'Error sending message' });
-  }
-});
-app.get('/conversation/:receiver/:postId', verifyToken, async (req, res) => {
-  const sender = req.username.username;
-  const { receiver, postId } = req.params;
-
-  try {
-    const messages = await Chat.find({
-      postId,
-      $or: [
-        { sender, receiver },
-        { sender: receiver, receiver: sender }
-      ]
-    }).sort('timestamp');
-
-    res.status(200).json(messages);
-  } catch (err) {
-    res.status(500).json({ error: 'Error fetching messages' });
-  }
-});
 
 // Existing Routes
 const signupRoutes = require('./routes/signup');
@@ -109,22 +65,7 @@ app.use('/postbyid', postByIdRoutes);
 app.use('/profile', profileUserRoutes);
 
 // Socket.IO Events
-io.on('connection', (socket) => {
-  console.log('New client connected:', socket.id);
 
-  socket.on('joinRoom', ({ roomId }) => {
-    socket.join(roomId);
-    console.log(`User joined room: ${roomId}`);
-  });
-
-  socket.on('sendMessage', (data) => {
-    io.to(data.roomId).emit('receiveMessage', data);
-  });
-
-  socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
-  });
-});
 // Start server
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
