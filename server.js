@@ -18,7 +18,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'https://6a27bc97c4fd7e95c57f424b--lostandfound27.netlify.app/', // Match your frontend origin
+    origin: 'https://lostandfound27.netlify.app/signup', // Match your frontend origin
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
   },
@@ -28,7 +28,7 @@ const io = new Server(server, {
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cors({
-  origin: 'https://6a27bc97c4fd7e95c57f424b--lostandfound27.netlify.app/',
+  origin: 'https://lostandfound27.netlify.app/signup',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
 }));
